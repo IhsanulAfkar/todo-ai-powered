@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
+    "dev": "next dev --turbopack -p 3001",
+    "build": "next build && tsc --project tsconfig.server.json",
+    "start": "node dist/server.js",
     "lint": "next lint",
-    "prepare": "husky install"
+    "typecheck": "tsc --noEmit",
+    "prepare": "husky"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -16,16 +17,21 @@
     ]
   },
   "dependencies": {
+    "@next/env": "^15.4.6",
+    "express": "^5.1.0",
     "next": "15.4.6",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "serve-static": "^2.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/express": "^5.0.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/serve-static": "^1.15.8",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
     "husky": "^8.0.0",
