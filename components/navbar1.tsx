@@ -1,12 +1,12 @@
-import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+import { Book, Menu, Sunset, Trees, Zap } from 'lucide-react';
 
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -14,14 +14,14 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+} from '@/components/ui/navigation-menu';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from '@/components/ui/sheet';
 
 interface MenuItem {
   title: string;
@@ -53,86 +53,87 @@ interface Navbar1Props {
 
 const Navbar1 = ({
   logo = {
-    url: "https://www.shadcnblocks.com",
-    src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
-    alt: "logo",
-    title: "Shadcnblocks.com",
+    url: 'https://www.shadcnblocks.com',
+    src: 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg',
+    alt: 'logo',
+    title: 'Shadcnblocks.com',
   },
   menu = [
-    { title: "Home", url: "#" },
+    { title: 'Home', url: '#' },
     {
-      title: "Products",
-      url: "#",
+      title: 'Articles',
+      url: '/articles',
+    },
+    {
+      title: 'Products',
+      url: '#',
       items: [
         {
-          title: "Blog",
-          description: "The latest industry news, updates, and info",
+          title: 'Blog',
+          description: 'The latest industry news, updates, and info',
           icon: <Book className="size-5 shrink-0" />,
-          url: "#",
+          url: '#',
         },
         {
-          title: "Company",
-          description: "Our mission is to innovate and empower the world",
+          title: 'Company',
+          description: 'Our mission is to innovate and empower the world',
           icon: <Trees className="size-5 shrink-0" />,
-          url: "#",
+          url: '#',
         },
         {
-          title: "Careers",
-          description: "Browse job listing and discover our workspace",
+          title: 'Careers',
+          description: 'Browse job listing and discover our workspace',
           icon: <Sunset className="size-5 shrink-0" />,
-          url: "#",
+          url: '#',
         },
         {
-          title: "Support",
+          title: 'Support',
           description:
-            "Get in touch with our support team or visit our community forums",
+            'Get in touch with our support team or visit our community forums',
           icon: <Zap className="size-5 shrink-0" />,
-          url: "#",
+          url: '#',
         },
       ],
     },
     {
-      title: "Resources",
-      url: "#",
+      title: 'Resources',
+      url: '#',
       items: [
         {
-          title: "Help Center",
-          description: "Get all the answers you need right here",
+          title: 'Help Center',
+          description: 'Get all the answers you need right here',
           icon: <Zap className="size-5 shrink-0" />,
-          url: "#",
+          url: '#',
         },
         {
-          title: "Contact Us",
-          description: "We are here to help you with any questions you have",
+          title: 'Contact Us',
+          description: 'We are here to help you with any questions you have',
           icon: <Sunset className="size-5 shrink-0" />,
-          url: "#",
+          url: '#',
         },
         {
-          title: "Status",
-          description: "Check the current status of our services and APIs",
+          title: 'Status',
+          description: 'Check the current status of our services and APIs',
           icon: <Trees className="size-5 shrink-0" />,
-          url: "#",
+          url: '#',
         },
         {
-          title: "Terms of Service",
-          description: "Our terms and conditions for using our services",
+          title: 'Terms of Service',
+          description: 'Our terms and conditions for using our services',
           icon: <Book className="size-5 shrink-0" />,
-          url: "#",
+          url: '#',
         },
       ],
     },
+
     {
-      title: "Pricing",
-      url: "#",
-    },
-    {
-      title: "Blog",
-      url: "#",
+      title: 'Blog',
+      url: '#',
     },
   ],
   auth = {
-    login: { title: "Login", url: "/auth/login" },
-    signup: { title: "Sign up", url: "/auth/register" },
+    login: { title: 'Login', url: '/auth/login' },
+    signup: { title: 'Sign up', url: '/auth/register' },
   },
 }: Navbar1Props) => {
   return (
@@ -280,7 +281,7 @@ const renderMobileMenuItem = (item: MenuItem) => {
 const SubMenuLink = ({ item }: { item: MenuItem }) => {
   return (
     <a
-      className="hover:bg-muted hover:text-accent-foreground flex select-none flex-row gap-4 rounded-md p-3 leading-none no-underline outline-none transition-colors"
+      className="hover:bg-muted hover:text-accent-foreground flex flex-row gap-4 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none"
       href={item.url}
     >
       <div className="text-foreground">{item.icon}</div>

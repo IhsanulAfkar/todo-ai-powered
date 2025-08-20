@@ -1,9 +1,8 @@
-import { cookies } from 'next/headers'
-import { verifySession } from '@/lib/session'
-
-export async function getSession() {
-    const setCookie = await cookies()
-  const token = setCookie.get('SESSION_KEY')?.value
-  if (!token) return null
-  return await verifySession(token)
-}
+export const getSession = async (): Promise<SessionData | null> => {
+  try {
+    const res = await fetch('/api/auth/session', { credentials: 'include' });
+    return await res.json();
+  } catch (error) {
+    return null;
+  }
+};

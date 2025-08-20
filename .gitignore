@@ -46,3 +46,4 @@ sandbox/
 
 dist/
 package-lock.json
+/public/tinymce/
