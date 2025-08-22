@@ -20,7 +20,7 @@ export function RichTextRender({ html, limit, className }: Props) {
 
   return (
     <div
-      className={cn('prose max-w-none', className)}
+      className={cn('prose dark:prose-invert max-w-none', className)}
       dangerouslySetInnerHTML={{ __html: truncatedHtml }}
     />
   );

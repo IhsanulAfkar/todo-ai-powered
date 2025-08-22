@@ -115,7 +115,7 @@ const BackgroundProcessBar: NextPage = () => {
   if (!isShowing) return <></>;
   return (
     <div className="pointer-events-none fixed right-4 bottom-4 z-50">
-      <div className="pointer-events-auto w-40 rounded-lg border bg-white px-4 py-2 shadow-lg md:w-96">
+      <div className="bg-sidebar pointer-events-auto w-40 w-full rounded-lg border px-4 py-2 shadow-lg md:w-96">
         <Collapsible open={open} onOpenChange={(e) => setOpen(e)}>
           <CollapsibleTrigger asChild>
             <Button variant={'ghost'} className="h-8 w-full justify-start px-0">

@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { toastValidation } from '@/lib/action/clientHelper';
 import { httpClient } from '@/lib/httpClient';
 import { ModalProps } from '@/types/props';
 import { NextPage } from 'next';
@@ -28,13 +29,15 @@ const CreateModal: NextPage<ModalProps> = ({ isOpen, setIsOpen, refresh }) => {
           name: data.name,
         },
       );
-      if (response.status == 200) {
+      if (status == 200) {
         toast.success('Success create category');
         setIsOpen(false);
         if (refresh) refresh();
         return;
       }
-      toast.error(response.data?.message);
+      console.log(response);
+      toastValidation(response);
+      // toast.error(response.data?.message);
     } catch (error) {
       console.error(error, 'masuk');
       toast.error('Server Error');

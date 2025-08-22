@@ -9,10 +9,10 @@ interface Props {
 const Layout: NextPage<Props> = ({ children }) => {
   return (
     <>
-      <div className="container mx-auto px-2 xl:px-6">
+      <div className="container mx-auto px-2 lg:px-20">
         <Navbar1 />
       </div>
-      <div className="container mx-auto px-2 xl:px-6">{children}</div>
+      <div className="container mx-auto px-2 lg:px-20">{children}</div>
     </>
   );
 };

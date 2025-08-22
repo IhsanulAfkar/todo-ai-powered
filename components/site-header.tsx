@@ -94,7 +94,7 @@ export function SiteHeader() {
               <DropdownMenuSeparator />
               <DropdownMenuItem>GitHub</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuItem disabled>API</DropdownMenuItem>
+              <DropdownMenuItem>Themes</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem variant="destructive" onClick={() => signOut()}>
                 Log out

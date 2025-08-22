@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import EditModal from './EditModal';
+import Alert from '@/components/default/action/Alert';
 
 const ArticleCategoryPage: NextPage = () => {
   const [selectedItem, setSelectedItem] = useState<TArticleCategory | null>(
@@ -88,8 +89,14 @@ const ArticleCategoryPage: NextPage = () => {
               <DropdownMenuContent className="w-56" align="end">
                 <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
 
-                <DropdownMenuItem variant="destructive">
-                  <DeleteButton handler={handleDelete} />
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={() => {
+                    setSelectedItem(item);
+                    setOpenDelete(true);
+                  }}
+                >
+                  delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -98,13 +105,25 @@ const ArticleCategoryPage: NextPage = () => {
       },
     },
   ];
+  const handleDelete = async () => {
+    if (!selectedItem) return;
+    const data = await httpClient.delete(
+      `/article-categories/${selectedItem.id}`,
+    );
+    if (data.status != 200) {
+      toast.error(data.message);
+      return;
+    }
+    toast.success('article deleted successfully');
+    refetch();
+  };
   if (error || isLoading)
     return <LoadingIndicator size={15} className="h-screen w-full" />;
 
   return (
     <div className="bg-foundation-100 mt-4 rounded-xl p-4">
-      <div className="flex items-center justify-between">
-        <p className="py-4 text-2xl font-bold">Intent Category Management</p>
+      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+        <p className="py-4 text-2xl font-bold">Article Category</p>
         <Button
           variant={'default'}
           className="cursor-pointer max-md:w-full"
@@ -131,6 +150,13 @@ const ArticleCategoryPage: NextPage = () => {
           isOpen={openEdit}
           setIsOpen={setOpenEdit}
           item={selectedItem}
+        />
+      )}
+      {openDelete && selectedItem && (
+        <Alert
+          handler={handleDelete}
+          show={openDelete}
+          setShow={setOpenDelete}
         />
       )}
     </div>

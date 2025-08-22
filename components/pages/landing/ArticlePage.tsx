@@ -19,7 +19,9 @@ const ArticlePage: NextPage = () => {
   return (
     <>
       <div className="mx-auto my-12 flex w-full max-w-4xl flex-col gap-6 md:flex-row">
-        <p className="text-center text-4xl font-bold text-gray-900">Articles</p>
+        <p className="text-center text-4xl font-bold text-gray-900 dark:text-white">
+          Articles
+        </p>
         <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
           {data.map((item) => (
             <Card

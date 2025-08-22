@@ -37,6 +37,7 @@ import {
 } from '@/components/ui/sidebar';
 import { APP_NAME } from '@/lib/clientConst';
 import { ArrowRightLeft } from 'lucide-react';
+import ThemeSwitcher from './ui/custom/theme-switcher';
 
 const data = {
   user: {
@@ -109,6 +110,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
         <NavMasterData items={data.masterdata} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <ThemeSwitcher />
       </SidebarContent>
     </Sidebar>
   );

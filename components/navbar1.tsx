@@ -22,6 +22,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import LandingThemeSwitcher from './ui/custom/landing-theme-switcher';
 
 interface MenuItem {
   title: string;
@@ -53,13 +54,12 @@ interface Navbar1Props {
 
 const Navbar1 = ({
   logo = {
-    url: 'https://www.shadcnblocks.com',
+    url: '/',
     src: 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg',
     alt: 'logo',
-    title: 'Shadcnblocks.com',
+    title: 'Next JS Starter',
   },
   menu = [
-    { title: 'Home', url: '#' },
     {
       title: 'Articles',
       url: '/articles',
@@ -162,6 +162,7 @@ const Navbar1 = ({
             </div>
           </div>
           <div className="flex gap-2">
+            <LandingThemeSwitcher />
             <Button asChild variant="outline" size="sm">
               <a href={auth.login.url}>{auth.login.title}</a>
             </Button>
