@@ -1,87 +1,77 @@
-const API_KEY = process.env.NEXT_PUBLIC_BACKEND_API_KEY || '';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+export type TResponse<T> = {
+  data: T;
+  message: string;
+  status: number;
+};
+
+export type TValidationResponse = TResponse<Record<string, string[]>>;
+
 export class HttpServer {
-  private baseUrl = '/api/end';
-  private token: string | null = null;
-  constructor(token: string | null = null) {
-    this.token = token;
-  }
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {},
-    isFormData = false,
-  ) {
-    const headers = new Headers(options.headers);
-    headers.set('x-api-key', API_KEY);
-    if (!isFormData) {
-      headers.set('Content-Type', 'application/json');
-    }
-    if (this.token) {
-      headers.set('Authorization', 'Bearer ' + this.token);
-    }
+  private client: AxiosInstance;
 
-    const res = await fetch(`${this.baseUrl}${endpoint}`, {
-      ...options,
-      headers,
-      credentials: 'include',
+  constructor(accessToken?: string) {
+    this.client = axios.create({
+      baseURL: BASE_URL,
+      headers: {
+        'x-api-key': `${API_KEY}`,
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      },
     });
+  }
 
-    if (!res.ok) {
-      let message = `Server Error`;
-      try {
-        const errorData = await res.json();
-        message = errorData.message || message;
-      } catch {}
-      throw new Error(message);
+  async request<T>(
+    method: 'get' | 'post' | 'put' | 'delete',
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<{ status: number; data: TResponse<T> }> {
+    try {
+      const response: AxiosResponse<T> = await this.client.request({
+        method,
+        url,
+        data,
+        ...config,
+      });
+
+      return { status: response.status, data: response.data as TResponse<T> };
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response?.status === 400) {
+        return {
+          status: 400,
+          data: error.response.data,
+        };
+      }
+
+      throw error;
     }
-    return {
-      data: (await res.json()) as T,
-      status: res.status,
-    };
   }
 
-  get<T>(endpoint: string, options?: RequestInit) {
-    return this.request<T>(endpoint, { ...options, method: 'GET' });
+  get<T = any>(url: string, config?: AxiosRequestConfig) {
+    return this.request<T>('get', url, undefined, config);
   }
 
-  post<T>(endpoint: string, body: any, options?: RequestInit) {
-    const isFormData = body instanceof FormData;
-    return this.request<T>(
-      endpoint,
-      {
-        ...options,
-        method: 'POST',
-        body: isFormData ? body : JSON.stringify(body),
-      },
-      isFormData,
-    );
+  post<T = any>(url: string, data?: any, config?: AxiosRequestConfig) {
+    return this.request<T>('post', url, data, config);
   }
 
-  put<T>(endpoint: string, body: any, options?: RequestInit) {
-    const isFormData = body instanceof FormData;
-    return this.request<T>(
-      endpoint,
-      {
-        ...options,
-        method: 'PUT',
-        body: isFormData ? body : JSON.stringify(body),
-      },
-      isFormData,
-    );
+  put<T = any>(url: string, data?: any, config?: AxiosRequestConfig) {
+    return this.request<T>('put', url, data, config);
   }
 
-  delete<T>(endpoint: string, options?: RequestInit) {
-    return this.request<T>(endpoint, { ...options, method: 'DELETE' });
+  delete<T = any>(url: string, config?: AxiosRequestConfig) {
+    return this.request<T>('delete', url, undefined, config);
   }
-
   public async raw(endpoint: string, options: RequestInit = {}) {
     return await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + endpoint, {
       ...options,
       headers: {
         'x-api-key': API_KEY,
         ...(options.headers || {}),
-      },
+      } as Record<string, string>,
     });
   }
 }
-
-export const httpServer: HttpServer = new HttpServer();
+export const httpServer = new HttpServer();

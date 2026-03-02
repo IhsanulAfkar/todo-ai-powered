@@ -6,7 +6,7 @@ interface Props {
   children: ReactNode;
 }
 
-const Layout: NextPage<Props> = ({ children }) => {
+const Layout = ({ children }: Props) => {
   return (
     <>
       <div className="container mx-auto px-2 lg:px-20">

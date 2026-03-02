@@ -1,28 +1,28 @@
-import { GalleryVerticalEnd } from 'lucide-react'
-import { NextPage } from 'next'
-import { ReactNode } from 'react'
+import { GalleryVerticalEnd } from 'lucide-react';
+import { NextPage } from 'next';
+import { ReactNode } from 'react';
 
 interface Props {
-    children: ReactNode
+  children: ReactNode;
 }
 
-const Layout: NextPage<Props> = ({ children }) => {
-    return <div className="grid min-h-svh lg:grid-cols-2">
-        <div className="flex flex-col gap-4 p-6 md:p-10">
-            <div className="flex flex-1 items-center justify-center">
-                <div className="w-full max-w-xs">
-                    {children}
-                </div>
-            </div>
+const Layout = ({ children }: Props) => {
+  return (
+    <div className="grid min-h-svh lg:grid-cols-2">
+      <div className="flex flex-col gap-4 p-6 md:p-10">
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-xs">{children}</div>
         </div>
-        <div className="bg-muted relative hidden lg:block">
-            <img
-                src="/assets/images/image.png"
-                alt="Image"
-                className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-            />
-        </div>
+      </div>
+      <div className="bg-muted relative hidden lg:block">
+        <img
+          src="/assets/images/image.png"
+          alt="Image"
+          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
+      </div>
     </div>
-}
+  );
+};
 
-export default Layout
+export default Layout;

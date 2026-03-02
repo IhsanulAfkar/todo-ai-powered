@@ -1,24 +1,32 @@
-import { httpServer } from '@/lib/httpServer';
-import { createSession, SESSION_EXPIRED, SESSION_KEY } from '@/lib/session';
+import { createSession, SessionData } from '@/lib/session';
+import { httpServer, TResponse } from '@/lib/httpServer';
+import { response } from 'express';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const { username, password } = await req.json();
+    const { username, password, captcha } = await req.json();
+
     const result = await httpServer.raw('/login', {
       method: 'POST',
       body: JSON.stringify({
         username,
         password,
+        captcha: captcha || '',
       }),
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    const responseJson = await result.json();
+    const responseJson = (await result.json()) as TResponse<{
+      accessToken: string;
+      refreshToken: string;
+      user: any;
+    }>;
     const { data: body } = responseJson;
     if (result.ok) {
+      //
       const payload: SessionData = {
         user: {
           id: body.user.uuid,
@@ -26,19 +34,10 @@ export async function POST(req: Request) {
           refreshToken: body.refreshToken,
           name: body.user.name,
           username: body.user.username,
+          role_id: 2,
         },
-        accessTokenExpired: body.accessTokenExpired,
-        refreshTokenExpired: body.refreshTokenExpired,
       };
-      const token = await createSession(payload);
-      const cookieStore = await cookies();
-      cookieStore.set(SESSION_KEY, token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: SESSION_EXPIRED,
-      });
+      await createSession(payload);
       return NextResponse.json(
         { message: 'Login Success' },
         { status: result.status },

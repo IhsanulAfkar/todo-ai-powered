@@ -2,15 +2,19 @@ import { AppSidebar } from '@/components/app-sidebar';
 import BackgroundProcessBar from '@/components/pages/BackgroundProcessBar';
 import { SiteHeader } from '@/components/site-header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { getServerSession } from '@/lib/serverSession';
 import { SocketProvider } from '@/providers/SocketProvider';
 import { NextPage } from 'next';
+import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
 }
 
-const Layout: NextPage<Props> = ({ children }) => {
+const Layout = async ({ children }: Props) => {
+  const session = await getServerSession();
+  if (!session) redirect('/auth/login');
   return (
     <SocketProvider>
       <SidebarProvider

@@ -22,3 +22,9 @@ export function buildUrl(
   const queryString = query.toString();
   return queryString ? `${baseUrl}?${queryString}` : baseUrl;
 }
+
+export const withBasePath = (path: string) => {
+  const bp = process.env.NEXT_PUBLIC_BASEPATH || '';
+  if (!bp) return path;
+  return `${bp}${path.startsWith('/') ? path : `/${path}`}`;
+};
