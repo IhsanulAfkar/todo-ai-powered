@@ -22,7 +22,7 @@ function newSessionId() {
   return crypto.randomBytes(32).toString('hex');
 }
 
-function redisKey(sid: string) {
+export function redisKey(sid: string) {
   return `${REDIS_PREFIX}${sid}`;
 }
 
@@ -42,7 +42,7 @@ async function clearSessionCookie() {
   cookieStore.delete(COOKIE_NAME);
 }
 
-function safeParseSession(raw: string): SessionData | null {
+export function safeParseSession(raw: string): SessionData | null {
   try {
     return JSON.parse(raw) as SessionData;
   } catch {

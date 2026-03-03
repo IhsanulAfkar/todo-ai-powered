@@ -50,6 +50,8 @@
     "axios": "^1.13.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "errsole": "^2.18.2",
+    "errsole-sqlite": "^3.0.3",
     "express": "^5.2.1",
     "filepond": "^4.32.11",
     "filepond-plugin-file-validate-type": "^1.2.9",
@@ -104,6 +106,7 @@
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
       "sharp",
+      "sqlite3",
       "unrs-resolver"
     ]
   }

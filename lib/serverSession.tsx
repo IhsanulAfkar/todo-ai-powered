@@ -1,25 +1,15 @@
 import { cookies } from 'next/headers';
-import { SessionData } from './session';
-export const getServerSession = async () => {
-  try {
-    const cookieStore = await cookies();
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/session`,
-      {
-        method: 'GET',
-        headers: {
-          // ✅ forward all cookies
-          cookie: cookieStore.toString(),
-          'Content-Type': 'application/json',
-        },
-        cache: 'no-store',
-      },
-    );
-    if (!res.ok) return null;
-    const json = (await res.json()) as SessionData | null;
-    return json;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
+import { COOKIE_NAME, redisKey, safeParseSession } from './session';
+import { getRedisClient } from '@/service/redis';
+
+export async function getServerSession() {
+  const cookieStore = await cookies();
+  const sid = cookieStore.get(COOKIE_NAME)?.value;
+  if (!sid) return null;
+
+  const redis = getRedisClient();
+  const raw = await redis.get(redisKey(sid));
+  if (!raw) return null;
+
+  return safeParseSession(raw);
+}
