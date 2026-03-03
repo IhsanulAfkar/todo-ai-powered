@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+const API_KEY = process.env.NEXT_PUBLIC_BACKEND_API_KEY;
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 export type TResponse<T> = {
   data: T;

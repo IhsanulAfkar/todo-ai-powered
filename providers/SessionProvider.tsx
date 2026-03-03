@@ -53,11 +53,11 @@ const StatusModal = ({
 }) => {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" />
-      <div className="relative w-full max-w-md rounded-md bg-white p-6 shadow-xl">
+      <div className="bg-card relative w-full max-w-md rounded-md p-6 shadow-xl">
         <h2 className="text-xl font-semibold">{title}</h2>
-        <p className="mt-2 text-sm text-gray-600">{message}</p>
+        <p className="text-muted-foreground mt-2 text-sm">{message}</p>
         {actions ? (
           <div className="mt-6 flex justify-end gap-2">{actions}</div>
         ) : null}

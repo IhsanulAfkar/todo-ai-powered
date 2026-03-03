@@ -6,24 +6,13 @@ async function handler(
   { params }: { params: Promise<{ backend: string[] }> },
 ) {
   const session = await getServerSession();
-  // if (!session?.user?.token) {
-  //   return NextResponse.json(
-  //     {
-  //       data: null,
-  //       message: 'Unauthorized',
-  //       status: 401,
-  //     },
-  //     { status: 401 },
-  //   );
-  // }
   const { backend } = await params;
   const path = backend.join('/');
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/${path}${req.nextUrl.search}`;
 
   const method = req.method;
-  // const headers = await nextHeaders();
   const headers = new Headers();
-  headers.append('x-api-key', process.env.NEXT_PUBLIC_API_KEY!);
+  headers.append('x-api-key', process.env.NEXT_PUBLIC_BACKEND_API_KEY!);
   if (session?.user?.token)
     headers.append('Authorization', 'Bearer ' + session.user.token);
   let body: BodyInit | null = null;
