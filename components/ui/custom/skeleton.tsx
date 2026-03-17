@@ -1,0 +1,34 @@
+import { Card, CardContent, CardHeader } from "../card";
+import { Skeleton } from "../skeleton";
+
+export function TaskCardSkeleton() {
+  return (
+    <Card className="space-y-3">
+      <CardHeader className="flex justify-between">
+        <Skeleton className="h-4 w-[60%]" />
+        <Skeleton className="h-4 w-10" />
+      </CardHeader>
+
+      <CardContent className="space-y-2">
+        <Skeleton className="w-full h-32 rounded-md" />
+        <Skeleton className="h-3 w-[40%]" />
+      </CardContent>
+    </Card>
+  )
+}
+export function ColumnSkeleton() {
+  return (
+    <div className="w-[320px] shrink-0 flex flex-col rounded-xl border bg-muted/40">
+      <div className="flex items-center justify-between px-4 py-3 border-b">
+        <Skeleton className="h-4 w-20" />
+        <Skeleton className="h-5 w-6 rounded-md" />
+      </div>
+
+      <div className="flex flex-col gap-3 p-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <TaskCardSkeleton key={i} />
+        ))}
+      </div>
+    </div>
+  )
+}

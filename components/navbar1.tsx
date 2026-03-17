@@ -57,7 +57,7 @@ const Navbar1 = ({
     url: '/',
     src: 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg',
     alt: 'logo',
-    title: 'Next JS Starter',
+    title: process.env.NEXT_PUBLIC_APP_NAME || 'Next JS Starter',
   },
   menu = [
     {

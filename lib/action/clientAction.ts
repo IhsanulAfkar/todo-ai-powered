@@ -2,6 +2,7 @@ import { toast } from 'sonner';
 import { toPng } from 'html-to-image';
 import { Options } from 'html-to-image/lib/types';
 import { withBasePath } from '../utils';
+import { httpClient } from '../httpClient';
 
 export type SignOutOptions = {
   callback?: string;
@@ -184,3 +185,19 @@ export const stripHtml = (html: string | null | undefined): string => {
 
   // return div.textContent || div.innerText || '';
 };
+export const updateTaskStatus = async (id: number, status: string, onUpdate?: () => void) => {
+  try {
+    const { message, status: responseStatus } = await httpClient.put(`/tasks/${id}`, {
+      status
+    })
+    if (responseStatus === 200) {
+      toast.success(message)
+      onUpdate?.()
+      return
+    }
+    toast.error(message)
+  } catch (error: any) {
+    console.error(error)
+    toast.error(error.message || 'Server Error')
+  }
+}

@@ -1,9 +1,11 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { FilePond, registerPlugin } from 'react-filepond';
+// @ts-ignore
 import 'filepond/dist/filepond.min.css';
 
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+// @ts-ignore
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 // Register the plugins

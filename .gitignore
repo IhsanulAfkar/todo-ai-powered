@@ -47,3 +47,5 @@ sandbox/
 dist/
 package-lock.json
 /public/tinymce/
+/public/uploads
+/generated/prisma

@@ -24,20 +24,19 @@ const Providers: NextPage<Props> = ({ children }) => {
     <>
       <Toaster richColors position="top-right" expand />
       <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
-        <SessionProvider>
-          <HeaderTitleProvider>
-            <QueryProvider>
-              <ProgressProvider
-                height="4px"
-                color="#193fb2"
-                options={{ showSpinner: true }}
-                shallowRouting
-              >
-                {children}
-              </ProgressProvider>
-            </QueryProvider>
-          </HeaderTitleProvider>
-        </SessionProvider>
+
+        <HeaderTitleProvider>
+          <QueryProvider>
+            <ProgressProvider
+              height="4px"
+              color="#193fb2"
+              options={{ showSpinner: true }}
+              shallowRouting
+            >
+              {children}
+            </ProgressProvider>
+          </QueryProvider>
+        </HeaderTitleProvider>
       </NextThemesProvider>
     </>
   );

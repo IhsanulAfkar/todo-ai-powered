@@ -20,6 +20,7 @@ import {
   IconSettings,
   IconUsers,
   IconArrowsRightLeft,
+  IconPencil,
 } from '@tabler/icons-react';
 
 import { NavMasterData } from '@/components/nav-masterdata';
@@ -52,9 +53,9 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: 'Article',
-      url: '/dashboard/article',
-      icon: IconArticle,
+      title: 'Task',
+      url: '/dashboard/task',
+      icon: IconPencil,
     },
     {
       title: 'Socket',
@@ -108,8 +109,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavMasterData items={data.masterdata} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        {/* <NavMasterData items={data.masterdata} /> */}
+        <NavSecondary items={[]} className="mt-auto" />
         <ThemeSwitcher />
       </SidebarContent>
     </Sidebar>

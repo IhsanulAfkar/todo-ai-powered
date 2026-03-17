@@ -1,7 +1,7 @@
 import { signOut } from './action/clientHelper';
 
 export class HttpClient {
-  private baseUrl = '/api/backend';
+  private baseUrl = '/api';
   private requestQueue: (() => Promise<void>)[] = [];
   private isProcessingQueue = false;
 
@@ -47,7 +47,7 @@ export class HttpClient {
         headers,
         credentials: 'include',
       });
-      if (res.status === 403) {
+      if (res.status === 401) {
         await signOut();
         throw new Error('Forbidden - signing out');
       }
@@ -57,7 +57,7 @@ export class HttpClient {
         try {
           const errorData = await res.json();
           message = errorData.message || message;
-        } catch {}
+        } catch { }
 
         throw new Error(message);
       }

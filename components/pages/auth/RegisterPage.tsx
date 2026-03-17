@@ -7,18 +7,18 @@ import OtpForm from './OtpForm'
 
 const RegisterPage: NextPage = () => {
   const [step, setStep] = useState<TRegisterStatus>('register');
-  const [registerUser, setRegisterUser] =
-    useState<TRegisterResponse | null>(null);
+  const [registerEmail, setRegisterEmail] =
+    useState<string | null>(null);
   return <>
     {step == 'register' && (
       <RegisterForm
         setStep={setStep}
-        registerUser={registerUser}
-        setRegisterUser={setRegisterUser}
+        registerEmail={registerEmail}
+        setRegisterEmail={setRegisterEmail}
       />
     )}
-    {step == 'otp' && registerUser && (
-      <OtpForm setStep={setStep} registerUser={registerUser} />
+    {step == 'otp' && registerEmail && (
+      <OtpForm setStep={setStep} registerEmail={registerEmail} />
     )}
   </>
 }

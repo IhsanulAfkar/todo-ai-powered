@@ -32,13 +32,13 @@ interface SessionContextType {
 const SessionContext = createContext<SessionContextType>({
   data: null,
   status: 'loading',
-  setData: () => {},
-  setStatus: () => {},
-  reloadSession: async () => {},
-  signOut: async () => {},
+  setData: () => { },
+  setStatus: () => { },
+  reloadSession: async () => { },
+  signOut: async () => { },
 });
 
-const ignoredRoutes = ['/', '/auth/login'];
+const ignoredRoutes = ['/', '/auth/login', '/auth/register'];
 
 const StatusModal = ({
   open,

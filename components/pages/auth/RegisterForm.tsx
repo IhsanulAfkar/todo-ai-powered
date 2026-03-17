@@ -5,25 +5,24 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toastValidation } from '@/lib/action/clientHelper';
 import { cn } from '@/lib/utils';
-import { TRegisterResponse, TRegisterStatus } from '@/types/auth';
+import { TRegisterStatus } from '@/types/auth';
 import { NextPage } from 'next';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 type TRegisterForm = {
   name: string;
-  username: string;
-  phonenumber: string;
+  email: string;
   password: string;
 };
 interface Props {
   setStep: Dispatch<SetStateAction<TRegisterStatus>>;
-  setRegisterUser: Dispatch<SetStateAction<TRegisterResponse | null>>;
-  registerUser: TRegisterResponse | null;
+  setRegisterEmail: Dispatch<SetStateAction<string | null>>;
+  registerEmail: string | null;
 }
 const RegisterForm: NextPage<Props> = ({
-  registerUser,
-  setRegisterUser,
+  registerEmail,
+  setRegisterEmail,
   setStep,
 }) => {
   const methods = useForm<TRegisterForm>({
@@ -34,31 +33,39 @@ const RegisterForm: NextPage<Props> = ({
     register,
     formState: { errors },
   } = methods;
+  const [isLoading, setIsLoading] = useState(false)
   const onSubmit = async (data: TRegisterForm) => {
     try {
+      setIsLoading(true)
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         body: JSON.stringify({
           name: data.name,
-          username: data.username,
-          phonenumber: data.phonenumber,
+          email: data.email,
           password: data.password,
         }),
       });
+      setIsLoading(false)
       const status = response.status;
       const responseBody = await response.json();
       if (response.ok) {
-        toast.success(
-          '[DEV] Success! your OTP Code is: ' + responseBody.data?.otp,
-        );
-        setRegisterUser(responseBody.data?.user);
-        setStep('otp');
-        return;
+        // toast.success(
+        //   '[DEV] Success! your OTP Code is: ' + responseBody.data?.otp,
+        // );
+        if (responseBody.data?.email) {
+
+          setRegisterEmail(responseBody.data?.email);
+          setStep('otp');
+          return;
+        }
+        toast.error('Invalid Response')
+        return
       }
       toast.error(responseBody.message);
       toastValidation(responseBody.data);
     } catch (error: any) {
       toast.error(error.message);
+      setIsLoading(false)
     }
   };
 
@@ -89,8 +96,8 @@ const RegisterForm: NextPage<Props> = ({
           <InputForm
             register={register}
             config={{
-              name: 'username',
-              title: 'Username',
+              name: 'email',
+              title: 'Email',
               registerConfig: {
                 required: 'cannot be empty',
                 pattern: {
@@ -98,26 +105,13 @@ const RegisterForm: NextPage<Props> = ({
                   message: 'username cannot contain spaces',
                 },
               },
-              type: 'text',
-              placeholder: 'johndoe',
-              error: errors.username,
-            }}
-          />
-          <InputForm
-            register={register}
-            config={{
-              name: 'phonenumber',
-              title: 'Phone Number',
-              registerConfig: {
-                required: 'cannot be empty',
-              },
-              placeholder: '0812345678',
-              type: 'text',
-              error: errors.phonenumber,
+              type: 'email',
+              placeholder: 'email@example.com',
+              error: errors.email,
             }}
           />
           <div>
-            <div className="grid gap-3">
+            <div className="grid gap-1">
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
               </div>
@@ -143,7 +137,7 @@ const RegisterForm: NextPage<Props> = ({
               <p className="text-xs text-red-700">{errors.password.message}</p>
             )}
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full" loading={isLoading}>
             Register
           </Button>
         </div>

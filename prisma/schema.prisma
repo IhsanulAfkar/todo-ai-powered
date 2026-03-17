@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                Int                @id @default(autoincrement())
+  name              String
+  email             String             @unique
+  password          String
+  is_verified       Boolean            @default(false)
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+  verificationCodes VerificationCode[]
+  tasks             Task[]
+  chatHistories     ChatHistory[]
+}
+
+model VerificationCode {
+  id         Int      @id @default(autoincrement())
+  email      String
+  code       String
+  expires_at DateTime
+  created_at DateTime @default(now())
+
+  user_id Int?
+  user    User? @relation(fields: [user_id], references: [id])
+
+  @@index([email])
+}
+
+enum Priority {
+  Urgent
+  High
+  Medium
+  Low
+}
+
+enum Status {
+  Pending
+  Ongoing
+  Completed
+}
+
+model Task {
+  id       Int      @id @default(autoincrement())
+  title    String
+  date     DateTime
+  priority Priority @default(Medium)
+  content  String?
+  status   Status   @default(Pending)
+
+  user_id Int
+  user    User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  images TaskImage[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model TaskImage {
+  id      Int  @id @default(autoincrement())
+  task_id Int
+  task    Task @relation(fields: [task_id], references: [id], onDelete: Cascade)
+
+  file_path    String
+  is_thumbnail Boolean @default(false)
+
+  created_at DateTime @default(now())
+}
+
+model ChatHistory {
+  id                     Int                    @id @default(autoincrement())
+  user_id                Int
+  role                   String
+  content                String
+  user                   User                   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at             DateTime               @default(now())
+  chatExecutionHistories ChatExecutionHistory[]
+}
+
+model ChatExecutionHistory {
+  id         Int         @id @default(autoincrement())
+  chat_id    Int
+  method     String
+  task_id    Int?
+  payload    Json?
+  chat       ChatHistory @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  created_at DateTime    @default(now())
+}

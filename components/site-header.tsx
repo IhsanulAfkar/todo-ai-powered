@@ -38,21 +38,16 @@ export function SiteHeader() {
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        {pathName != '/dashboard' && (
-          <Button variant="outline" onClick={() => router.back()}>
-            <ArrowLeft />
-          </Button>
-        )}
-        <div className="flex w-full items-center justify-between gap-4">
-          <h1 className="text-base font-medium">{title}</h1>
+
+        <div className="flex w-full items-center justify-end gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button asChild variant={'ghost'}>
                 <div className="flex items-center gap-2 hover:cursor-pointer">
                   <User />
                   <div>
-                    <p className="font-semibold">{session?.user?.username}</p>
-                    <p className="font-normal">Admin</p>
+                    <p className="font-semibold">{session?.user?.name}</p>
+                    <p className="font-normal text-xs text-muted-foreground">{session?.user.email}</p>
                   </div>
                 </div>
               </Button>

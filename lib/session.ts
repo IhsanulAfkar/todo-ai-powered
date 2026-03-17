@@ -3,18 +3,15 @@ import crypto from 'crypto';
 import { getRedisClient } from '@/service/redis';
 import parse from 'parse-duration';
 export const COOKIE_NAME = 'session_id';
-const IDLE_TTL = parse(process.env.SESSION_EXPIRED_TIME ?? '15m')! / 1000;
+const IDLE_TTL = parse(process.env.SESSION_EXPIRED_TIME ?? '1d')! / 1000;
 const COOKIE_TTL = 24 * 60 * 60 * 10;
 const REDIS_PREFIX = process.env.SESSION_PREFIX ?? 'session:';
 
 export type SessionData = {
   user: {
-    id: string;
+    id: number;
     name: string;
-    username: string;
-    role_id: number;
-    token: string;
-    refreshToken: string;
+    email: string;
   };
 };
 

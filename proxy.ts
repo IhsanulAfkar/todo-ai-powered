@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const isDev = process.env.NODE_ENV === 'development';
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   // setup CSP
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
   const cspHeader = `

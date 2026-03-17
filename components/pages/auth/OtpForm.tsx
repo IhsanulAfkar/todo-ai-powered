@@ -15,14 +15,14 @@ import { toast } from 'sonner';
 
 interface Props {
     setStep: Dispatch<SetStateAction<TRegisterStatus>>;
-    registerUser: TRegisterResponse;
+    registerEmail: string;
 }
-const OtpForm: NextPage<Props> = ({ setStep, registerUser }) => {
+const OtpForm: NextPage<Props> = ({ setStep, registerEmail }) => {
     const router = useRouter();
     const [otp, setOtp] = useState('');
     // const handleResend = async () => {
     //     const { data, status } = await httpClient.post('/resend-otp', {
-    //         email: registerUser.email,
+    //         email: registerEmail.email,
     //     });
     //     if (status === 200) {
     //         toast.success('[DEV] Success! your OTP Code is: ' + data.data.otp);
@@ -36,16 +36,16 @@ const OtpForm: NextPage<Props> = ({ setStep, registerUser }) => {
             return;
         }
         try {
-            const response = await fetch('/api/auth/otp', {
+            const response = await fetch('/api/auth/verify', {
                 method: 'POST',
                 body: JSON.stringify({
-                    otp,
-                    phonenumber: registerUser.phonenumber,
+                    code: otp,
+                    email: registerEmail,
                 })
             })
             const status = response.status
             if (status == 200) {
-                toast.success('OTP verified successfully');
+                toast.success('Email verified successfully');
                 router.push('/auth/login');
                 return;
             }
@@ -80,7 +80,7 @@ const OtpForm: NextPage<Props> = ({ setStep, registerUser }) => {
                         <InputOTPSlot index={5} className="h-14 w-14" />
                     </InputOTPGroup>
                 </InputOTP>
-                <p className='text-muted-foreground text-sm text-balance'>
+                {/* <p className='text-muted-foreground text-sm text-balance'>
                     <span>Didn't receive code?</span>
                     <span
                         className="text-primary-main cursor-pointer font-semibold"
@@ -89,7 +89,7 @@ const OtpForm: NextPage<Props> = ({ setStep, registerUser }) => {
                         Resend
                     </span>
 
-                </p>
+                </p> */}
             </div>
             <Button
                 onClick={sendOtp}

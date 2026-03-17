@@ -22,9 +22,9 @@ interface SocketContextType {
 const SocketContext = createContext<SocketContextType>({
   socket: null,
   isConnected: false,
-  on: () => {},
-  off: () => {},
-  emit: () => {},
+  on: () => { },
+  off: () => { },
+  emit: () => { },
 });
 export const useSocket = () => {
   return useContext(SocketContext);
@@ -39,7 +39,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
   const [socket, setSocket] = useState<Socket | null>(getSocket());
   const [isConnected, setIsConnected] = useState(false);
   const socketRef = useRef<Socket | null>(null);
-  const token = session?.user?.token;
+  const token = '';
   const userId = session?.user?.id;
   useEffect(() => {
     if (status === 'authenticated' && token && userId) {
@@ -57,7 +57,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
       newSocket.on('connect', () => {
         setIsConnected(true);
       });
-      newSocket.on('connected', (data) => {});
+      newSocket.on('connected', (data) => { });
 
       newSocket.on('disconnect', (reason) => {
         setIsConnected(false);
@@ -78,7 +78,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
         setIsConnected(false);
       }
     }
-  }, [status, session?.user?.token]);
+  }, [status, token]);
   const on = (channel: string, handler: (data: any) => void) => {
     // if (!socket || !userId) return;
     socketRef.current?.off(`${userId}:${channel}`);

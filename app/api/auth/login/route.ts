@@ -3,49 +3,40 @@ import { httpServer, TResponse } from '@/lib/httpServer';
 import { response } from 'express';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-
+import Joi from 'joi';
+import { validate } from '@/lib/validator';
+import { prisma } from '@/lib/prisma';
+const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(8).required()
+})
 export async function POST(req: Request) {
   try {
-    const { username, password, captcha } = await req.json();
+    const body = await req.json()
 
-    const result = await httpServer.raw('/login', {
-      method: 'POST',
-      body: JSON.stringify({
-        username,
-        password,
-        captcha: captcha || '',
-      }),
-      headers: {
-        'Content-Type': 'application/json',
+    const { email, password } = validate<{ email: string, password: string }>(
+      loginSchema,
+      body
+    )
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      }
+    })
+    if (!user) return NextResponse.json({ message: "User not found" }, { status: 404 })
+    const payload: SessionData = {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email
       },
-    });
-    const responseJson = (await result.json()) as TResponse<{
-      accessToken: string;
-      refreshToken: string;
-      user: any;
-    }>;
-    const { data: body } = responseJson;
-    if (result.ok) {
-      //
-      const payload: SessionData = {
-        user: {
-          id: body.user.uuid,
-          token: body.accessToken,
-          refreshToken: body.refreshToken,
-          name: body.user.name,
-          username: body.user.username,
-          role_id: 2,
-        },
-      };
-      await createSession(payload);
-      return NextResponse.json(
-        { message: 'Login Success' },
-        { status: result.status },
-      );
-    }
-    return NextResponse.json(responseJson, { status: result.status });
-  } catch (error) {
+    };
+    await createSession(payload);
+    return NextResponse.json(
+      { message: 'Login Success' },
+    );
+  } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ message: 'Server Error' }, { status: 500 });
+    return NextResponse.json({ message: error.message || 'Server Error' }, { status: 500 });
   }
 }

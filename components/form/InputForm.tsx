@@ -20,7 +20,7 @@ interface Props {
 const InputForm: NextPage<Props> = ({ config, register, className }) => {
   return (
     <div className="">
-      <div className="grid">
+      <div className="grid gap-1">
         {config.title && <Label htmlFor={config.name}>{config.title}</Label>}
         <Input
           type={config.type}
