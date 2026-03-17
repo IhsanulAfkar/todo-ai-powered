@@ -1,6 +1,7 @@
+import { TChat } from "@/hooks/datasource/useChatHistory"
 import { UIMessage } from "ai"
 
-export function mapChatHistory(chats: any[]): UIMessage[] {
+export function mapChatHistory(chats: TChat[]): UIMessage[] {
   return chats.map((chat) => ({
     id: String(chat.id),
     role: chat.role,
@@ -11,13 +12,13 @@ export function mapChatHistory(chats: any[]): UIMessage[] {
       }
     ],
 
-    toolInvocations: chat.chatExecutionHistories?.map((exec: any) => ({
+    toolInvocations: chat.chatExecutionHistories?.map(exec => ({
       toolCallId: `tool-${exec.id}`,
       toolName: exec.method,
       state: "result",
       args: exec.payload,
       result: {
-        task_id: exec.task_id
+        tasks: exec.tasks
       }
     }))
   }))

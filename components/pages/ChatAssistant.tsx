@@ -16,6 +16,7 @@ import { mapChatHistory } from "@/lib/ai";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import TaskDetailModal from "./dashboard/taks/TaskDetailModal";
 import TaskFetchId from "./dashboard/taks/TaskFetchId";
+import { TTask } from "@/hooks/datasource/useTasks";
 // Internal Helper Component for Styling
 function MarkdownRenderer({ content }: { content: string }) {
   return (
@@ -77,7 +78,7 @@ export function ChatAssistant({ messages }: { messages: TChat[] }) {
     },
     messages: mapChatHistory(messages)
   });
-
+  console.log(mapChatHistory(messages))
   useEffect(() => {
     requestAnimationFrame(() => {
       bottomRef.current?.scrollIntoView({
@@ -93,13 +94,25 @@ export function ChatAssistant({ messages }: { messages: TChat[] }) {
     }
   }, [isOpen])
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div
+      className={`fixed z-50 ${isOpen
+        ? "inset-0 sm:inset-auto sm:bottom-6 sm:right-6"
+        : "bottom-6 right-6"
+        }`}
+    >
       {!isOpen ? (
         <Button size="icon" className="h-14 w-14 rounded-full shadow-lg" onClick={() => setIsOpen(true)}>
-          <MessageCircle className="h-6 w-6" />
+          <MessageCircle className="size-8" />
         </Button>
       ) : (
-        <Card className="w-[450px] h-[700px] flex flex-col shadow-2xl border-t-4 border-t-primary">
+        <Card
+          className="
+    w-full h-full 
+    sm:w-[450px] sm:h-[700px] 
+    flex flex-col shadow-2xl 
+    border-t-4 border-t-primary
+    rounded-none sm:rounded-xl
+  ">
           <CardHeader className="flex flex-row items-center justify-between py-3 px-4 border-b">
             <CardTitle className="font-medium">AI Assistant</CardTitle>
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setIsOpen(false)}>
@@ -107,7 +120,7 @@ export function ChatAssistant({ messages }: { messages: TChat[] }) {
             </Button>
           </CardHeader>
           <CardContent className="flex-1 overflow-hidden p-0">
-            <ScrollArea className="h-full p-4">
+            <ScrollArea className="h-full px-4">
               {chatMessages.map((m: any) => {
                 const text = m.parts
                   ?.filter((p: any) => p.type === "text")
@@ -173,15 +186,13 @@ export function ChatAssistant({ messages }: { messages: TChat[] }) {
                                       </pre>
                                     </div>
                                   )}
+                                  <p>Tasks</p>
+                                  {Array.isArray(tool.result?.tasks) && tool.result?.tasks.map((t: TTask) => (<TaskFetchId key={t.id} task_id={t.id}>
+                                    <div className="mb-2 font-medium">
+                                      {t.title}
+                                    </div>
 
-                                  {tool.result?.task_id && (
-                                    <TaskFetchId task_id={Number(tool.result?.task_id)}>
-                                      <div className="mb-1 font-medium">
-                                        See Task
-                                      </div>
-
-                                    </TaskFetchId>
-                                  )}
+                                  </TaskFetchId>))}
                                 </div>
                               </PopoverContent>
                             </Popover>
@@ -212,46 +223,47 @@ export function ChatAssistant({ messages }: { messages: TChat[] }) {
               )}
               <div ref={bottomRef} />
             </ScrollArea>
-          </CardContent>
-          <CardFooter className="p-3 border-t">
-            <form onSubmit={async (e) => {
-              e.preventDefault()
-              sendMessage({ text: input }, {
-                body: {
-                  text: input
-                }
-              });
-              setInput('');
-            }} className="flex w-full gap-2">
-              <Input
-                placeholder="Ask something..."
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                className="flex-1"
-                disabled={status === 'streaming'}
-              />
+            <div className="border-t p-3">
+              <form onSubmit={async (e) => {
+                e.preventDefault()
+                sendMessage({ text: input }, {
+                  body: {
+                    text: input
+                  }
+                });
+                setInput('');
+              }} className="flex w-full gap-2">
+                <Input
+                  placeholder="Ask something..."
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  className="flex-1"
+                  disabled={status === 'streaming'}
+                />
 
-              {status === 'streaming' ? (
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="icon"
-                  onClick={stop}
-                  className="animate-in fade-in zoom-in duration-200"
-                >
-                  <Square className="h-4 w-4 fill-current" />
-                </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  size="icon"
-                  disabled={!input || input.trim().length === 0}
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
-              )}
-            </form>
-          </CardFooter>
+                {status === 'streaming' ? (
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    onClick={stop}
+                    className="animate-in fade-in zoom-in duration-200"
+                  >
+                    <Square className="h-4 w-4 fill-current" />
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    size="icon"
+                    disabled={!input || input.trim().length === 0}
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                )}
+              </form>
+            </div>
+          </CardContent>
+
         </Card>
       )}
     </div>

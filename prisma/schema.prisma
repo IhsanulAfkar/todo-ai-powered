@@ -89,6 +89,7 @@ model ChatExecutionHistory {
   chat_id    Int
   method     String
   task_id    Int?
+  task_lists Int[]
   payload    Json?
   chat       ChatHistory @relation(fields: [chat_id], references: [id], onDelete: Cascade)
   created_at DateTime    @default(now())

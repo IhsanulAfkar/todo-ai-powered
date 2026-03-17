@@ -41,7 +41,6 @@ interface ButtonProps
   asChild?: boolean
   loading?: boolean
 }
-
 function Button({
   className,
   variant,
@@ -61,10 +60,14 @@ function Button({
       className={cn(buttonVariants({ variant, size }), className)}
       {...props}
     >
-      <span className="flex items-center gap-2">
-        {loading && <Loader2 className="animate-spin" />}
-        {children}
-      </span>
+      {loading ? (
+        <span className="flex items-center gap-2">
+          <Loader2 className="animate-spin size-4" />
+          {children}
+        </span>
+      ) : (
+        children
+      )}
     </Comp>
   )
 }

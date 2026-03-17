@@ -6,13 +6,24 @@ import { toast } from 'sonner';
 import { useSort } from '../useSort';
 import { useSyncUrl } from '../useSyncUrl';
 import { buildUrl } from '@/lib/utils';
+import { TTask } from './useTasks';
 export type TChat = {
   id: number,
   user_id: number,
   role: "assistant" | "user",
   content: string,
   created_at: string
-  chatExecutionHistories: []
+  chatExecutionHistories: TChatExecution[]
+}
+export type TChatExecution = {
+  id: number;
+  method: string;
+  payload: any;
+  task_id: number | null;
+  created_at: string;
+  task_lists: number[];
+  chat_id: number;
+  tasks: TTask[]
 }
 const useChatHistory = () => {
   const { order, sort } = useSort();

@@ -4,7 +4,7 @@ import PriorityBadge from "./PriorityBadge";
 
 interface Props {
   task: TTask;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 export default function TaskCard({ task, onClick }: Props) {

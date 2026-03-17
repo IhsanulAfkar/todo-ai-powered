@@ -27,11 +27,36 @@ export const GET = withAuth(async (req: Request, auth: TAuthUser) => {
       },
       take: 20
     })
+    const taskIds = new Set<number>(
+      histories.flatMap(h =>
+        h.chatExecutionHistories.flatMap(exec => exec.task_lists)
+      )
+    );
+    const affectedTasks = await prisma.task.findMany({
+      where: {
+        user_id: auth.user.id,
+        id: {
+          in: [...taskIds]
+        }
+      }
+    })
+    const taskMap = new Map(affectedTasks.map(t => [t.id, t]));
 
-    histories.reverse()
+    const formatted = histories
+      .slice()
+      .reverse()
+      .map(history => ({
+        ...history,
+        chatExecutionHistories: history.chatExecutionHistories.map(exec => ({
+          ...exec,
+          tasks: exec.task_lists
+            .map(id => taskMap.get(id))
+            .filter(Boolean),
+        })),
+      }));
     return NextResponse.json({
       message: "Success",
-      data: histories
+      data: formatted
     })
   } catch (error) {
     console.error(error)
@@ -44,7 +69,6 @@ export async function POST(req: Request) {
     const session = await getServerSession()
     if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
     const userId = Number(session.user.id);
-
     // 1. Save the User's Message immediately
     await prisma.chatHistory.create({
       data: {
@@ -54,9 +78,9 @@ export async function POST(req: Request) {
       },
     });
     let aiChatId: number | null = null
-    const toolsResult: { method: string, task_id: number | null, payload: any } = {
+    const toolsResult: { method: string, task_lists: number[], payload: any } = {
       method: '',
-      task_id: null,
+      task_lists: [],
       payload: {}
     }
     const result = await streamText({
@@ -96,8 +120,9 @@ If multiple tasks match, list them clearly.
               }
             })
             toolsResult.method = 'CREATE';
-            toolsResult.task_id = task.id;
+            toolsResult.task_lists.push(task.id);
             toolsResult.payload = payload
+            return task
           }
         }),
         searchTasks: tool({
@@ -122,6 +147,7 @@ If multiple tasks match, list them clearly.
               },
             });
             toolsResult.method = "SEARCH_TASKS";
+            toolsResult.task_lists = tasks.map(t => t.id)
             toolsResult.payload = { query, priority };
 
             return tasks;
@@ -160,8 +186,8 @@ If multiple tasks match, list them clearly.
 
             toolsResult.method = "GET_TASKS";
             toolsResult.payload = { date_from, date_to, priority, keyword };
-
-            return tasks; // IMPORTANT: return result for LLM
+            toolsResult.task_lists = tasks.map(t => t.id)
+            return tasks;
           },
         }),
         requestDeleteTask: tool({
@@ -170,7 +196,7 @@ If multiple tasks match, list them clearly.
             query: z.string().describe("Keyword or phrase to identify the task to delete")
           }),
           execute: async ({ query }) => {
-
+            console.log(query)
             const tasks = await prisma.task.findMany({
               where: {
                 user_id: userId,
@@ -187,7 +213,9 @@ If multiple tasks match, list them clearly.
                 error: `No tasks found matching "${query}".`
               }
             }
-
+            toolsResult.method = "REQUEST_DELETE_TASK"
+            toolsResult.task_lists = tasks.map(t => t.id)
+            toolsResult.payload = { query }
             // If multiple tasks match, let the AI ask the user which one
             if (tasks.length > 1) {
               return {
@@ -197,11 +225,6 @@ If multiple tasks match, list them clearly.
             }
 
             const task = tasks[0]
-
-            toolsResult.method = "REQUEST_DELETE_TASK"
-            toolsResult.task_id = task.id
-            toolsResult.payload = { query }
-
             return {
               requiresConfirmation: true,
               task
@@ -214,7 +237,7 @@ If multiple tasks match, list them clearly.
             task_id: z.number()
           }),
           execute: async ({ task_id }) => {
-
+            console.log(task_id, 'DELETE')
             const task = await prisma.task.delete({
               where: {
                 id: task_id,
@@ -223,17 +246,23 @@ If multiple tasks match, list them clearly.
             })
 
             toolsResult.method = "DELETE_TASK"
-            toolsResult.task_id = task_id
+            toolsResult.task_lists = [task_id]
+            if (!task) {
+              return {
+                error: `No tasks found matching "${task_id}".`
 
+              }
+            }
             return {
-              success: true,
+              success: !!task,
               deletedTask: task
             }
           }
         })
       },
       stopWhen: stepCountIs(7),
-      onFinish: async ({ text }) => {
+      onFinish: async (props) => {
+        const { text } = props
         const chat = await prisma.chatHistory.create({
           data: {
             user_id: userId,
@@ -242,13 +271,13 @@ If multiple tasks match, list them clearly.
           },
         });
         aiChatId = chat.id
-        if (aiChatId) {
+        if (aiChatId && toolsResult.method) {
           // save instruction
           await prisma.chatExecutionHistory.create({
             data: {
               chat_id: aiChatId,
               method: toolsResult.method,
-              task_id: toolsResult.task_id,
+              task_lists: toolsResult.task_lists,
               payload: toolsResult.payload,
             }
           })
